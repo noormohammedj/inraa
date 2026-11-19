@@ -46,8 +46,19 @@
     for (let d = 1; d <= 26; d++) h += '<i class="' + (d === 20 ? 'sel' : booked.includes(d) ? 'bk' : peak.includes(d) ? 'pk' : '') + '">' + d + '</i>';
     c.innerHTML = h;
   })();
-  // fitcheq: the real member app, playing a short demo
-  (function () {
+  // fitcheq: the real member app, loaded from the Fitcheq site and playing a short demo
+  function loadFitcheq(done) {
+    const base = C.fitcheqUrl, el = $('#fq-live'); if (!el) return;
+    const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = base + 'app.css'; document.head.appendChild(css);
+    const files = ['data.js', 'app.js', 'demo.js']; let i = 0;
+    (function next() {
+      if (i >= files.length) return done();
+      const sc = document.createElement('script'); sc.src = base + files[i++]; sc.onload = next;
+      sc.onerror = () => { el.closest('.stage').innerHTML = '<a class="btn out" style="margin:auto" href="' + esc(base) + '" target="_blank" rel="noopener">Open the Fitcheq demo</a>'; };
+      document.body.appendChild(sc);
+    })();
+  }
+  loadFitcheq(function () {
     const el = $('#fq-live'); if (!el || !window.FQApp) return;
     const app = FQApp.mount(el, { member: 'm1', screen: 'today' });
     if (!window.FQDemo) return;
@@ -64,7 +75,7 @@
         { scroll: '[data-sec="whatif"]', wait: 300 },
         { slide: ['.fa-range', 100], wait: 1800, hide: true },
       ] });
-  })();
+  });
 
   // ---------- business picker ----------
   const keys = Object.keys(C.products);

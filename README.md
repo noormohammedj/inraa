@@ -12,7 +12,7 @@ Plain HTML, CSS and JavaScript. No build step. Hosted on GitHub Pages.
 | `assets/js/agent.js` | Proposal agent: requirement detection, effort, timeline and pricing model (`RATE` at the top) |
 | `assets/js/site.js` | Page behaviour: product sections, picker, proposal flow, contact links |
 | `assets/css/site.css` | Styles |
-| `fitcheq/` | Fitcheq sales site, member app and owner console prototype |
+| `fitcheq/` | Redirects to the Fitcheq site (code lives in github.com/noormohammedj/fitcheq; address set by `fitcheqUrl` in config) |
 | `worker/` | Optional Cloudflare Worker that uses Claude to write proposal text |
 | `CNAME` | Custom domain for GitHub Pages |
 

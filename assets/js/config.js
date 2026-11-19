@@ -11,6 +11,9 @@ window.INRAA = {
   // Leave empty to use the built-in proposal engine, which works offline.
   aiEndpoint: '',
 
+  // Where the Fitcheq site lives (its own repo: github.com/noormohammedj/fitcheq). Keep the trailing slash.
+  fitcheqUrl: 'https://noormohammedj.github.io/fitcheq/',
+
   products: {
     plotskart: {
       name: 'Plotskart',
@@ -39,7 +42,7 @@ window.INRAA = {
     },
     fitcheq: {
       name: 'Fitcheq',
-      url: 'fitcheq/',
+      url: '', // filled from fitcheqUrl below
       tagline: 'Diet, workouts and progress for gyms',
       for: 'Gyms and fitness studios',
       pick: 'I run a gym or studio',
@@ -51,3 +54,4 @@ window.INRAA = {
     },
   },
 };
+window.INRAA.products.fitcheq.url = window.INRAA.fitcheqUrl;
