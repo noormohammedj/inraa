@@ -12,7 +12,7 @@ window.INRAA = {
   aiEndpoint: '',
 
   // Where the Fitcheq site lives (its own repo: github.com/noormohammedj/fitcheq). Keep the trailing slash.
-  fitcheqUrl: 'https://fitcheq.inraasolution.com/',
+  fitcheqUrl: 'https://fitcheq.inraasolution.com/demo/',
 
   products: {
     plotskart: {
