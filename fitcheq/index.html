@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>fitcheq</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="admin.css">
+<style>
+  /* Sales site. Plain: dark nav and hero, then white / light-grey bands, each with a phone that demos itself. One light look. */
+  :root { --ink: #161616; --grey: #f2f2f2; --dark: #1c1c1c; --s: .8; --ls: .72; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body { background: #fff; color: var(--ink); font-family: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 16px; line-height: 1.5; margin: 0; -webkit-font-smoothing: antialiased; }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--dark); }
+  .in { max-width: 1080px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .t-xl { font-size: clamp(52px, 8vw, 96px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.02; margin: 0; }
+  .t-l { font-size: clamp(36px, 4.6vw, 52px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.08; margin: 0; text-wrap: balance; }
+  .t-m { font-size: clamp(28px, 3.4vw, 38px); font-weight: 700; letter-spacing: -0.025em; line-height: 1.12; margin: 0; text-wrap: balance; }
+  p.body { font-size: 17px; font-weight: 500; margin: 18px 0 0; max-width: 30em; }
+
+  /* nav */
+  .nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--dark); color: #fff; }
+  .nav .in { display: flex; align-items: center; height: 64px; gap: 36px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; font-size: 22px; letter-spacing: -0.03em; }
+  .logo i { width: 26px; height: 26px; border-radius: 7px; background: #fff; display: grid; place-items: center; }
+  .logo i svg { width: 17px; height: 17px; stroke: var(--ink); stroke-width: 3.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .nav nav { margin-left: auto; display: flex; gap: 34px; font-weight: 600; font-size: 15px; }
+  .nav nav a { text-decoration: none; opacity: .92; }
+  .nav nav a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
+
+  /* hero */
+  .hero { position: relative; color: #fff; text-align: center; overflow: hidden; background: #1d2a2f; }
+  .hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hero .in { position: relative; padding-block: 150px 140px; }
+  .hero .t-xl { text-shadow: 0 2px 30px rgba(0,0,0,.25); }
+  .hero p { font-size: clamp(17px, 1.8vw, 21px); font-weight: 600; max-width: 34em; margin: 26px auto 0; }
+  .badges { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 34px; }
+  .badge { display: inline-flex; align-items: center; gap: 10px; background: #000; color: #fff; border: 1px solid #a6a6a6; border-radius: 10px; padding: 8px 18px 8px 14px; text-decoration: none; text-align: left; min-width: 170px; }
+  .badge svg { width: 26px; height: 26px; stroke: #fff; fill: none; stroke-width: 1.8; flex: none; }
+  .badge small { display: block; font-size: 11px; font-weight: 500; line-height: 1.1; }
+  .badge b { display: block; font-size: 19px; font-weight: 600; line-height: 1.15; letter-spacing: -0.01em; }
+  .badge:hover { border-color: #fff; }
+  .hero .for { margin-top: 22px; font-size: 14px; font-weight: 500; opacity: .75; }
+
+  /* feature bands */
+  .band { padding-block: 100px; }
+  .band.grey { background: var(--grey); }
+  .band .in { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 80px; align-items: center; }
+  .band.flip .in { grid-template-columns: auto minmax(0, 1fr); }
+  .band.flip .copy { order: 2; }
+  .copy { min-width: 0; }
+  .slot { width: calc(375px * var(--s)); height: calc(790px * var(--s)); position: relative; flex: none; }
+  .slot > .fq-phone { transform: scale(var(--s)); transform-origin: top left; position: absolute; top: 0; left: 0; }
+  ol.steps { list-style: none; counter-reset: st; padding: 0; margin: 30px 0 0; display: grid; gap: 4px; max-width: 30em; }
+  ol.steps li { counter-increment: st; display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start; padding: 9px 12px 9px 8px; border-radius: 10px; color: #6e6e73; font-weight: 500; transition: background .25s, color .25s; }
+  ol.steps li::before { content: counter(st); width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid #c7c7cc; display: grid; place-items: center; font-size: 13px; font-weight: 700; transition: all .25s; }
+  ol.steps li.on { color: var(--ink); background: rgba(0,0,0,.04); }
+  .band.grey ol.steps li.on { background: #fff; }
+  ol.steps li.on::before { background: var(--ink); border-color: var(--ink); color: #fff; }
+  ol.steps b { display: block; color: inherit; font-weight: 600; }
+  .hint { font-size: 13.5px; color: #8e8e93; margin-top: 16px; }
+
+  /* numbers */
+  .nums { background: var(--yellow); padding-block: 80px; text-align: center; }
+  .nums .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin-top: 40px; }
+  .nums h3 { font-size: 17px; margin: 0 0 4px; font-weight: 700; }
+  .nums .n { font-size: 44px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .nums p { margin: 6px auto 0; font-weight: 600; font-size: 15px; max-width: 15em; }
+  .nums .foot { font-weight: 700; font-size: 19px; margin: 44px auto 0; max-width: 34em; }
+
+  /* console */
+  .console { padding-block: 110px 100px; text-align: center; }
+  .console p.body { margin-left: auto; margin-right: auto; }
+  .laptop { margin: 50px auto 0; width: calc(1280px * var(--ls) + 28px); max-width: 100%; }
+  .lid { background: #111; border-radius: 18px 18px 4px 4px; padding: 14px; }
+  .lap-slot { width: calc(1280px * var(--ls)); height: calc(800px * var(--ls)); position: relative; overflow: hidden; border-radius: 4px; }
+  .lap-slot > .fq-admin { width: 1280px; height: 800px; transform: scale(var(--ls)); transform-origin: top left; position: absolute; top: 0; left: 0; }
+  .base { height: 16px; margin: 0 -44px; background: linear-gradient(#d8d8dc, #b6b6bb); border-radius: 0 0 16px 16px; }
+  .base::before { content: ""; display: block; width: 130px; height: 6px; margin: 0 auto; background: #a5a5aa; border-radius: 0 0 7px 7px; }
+  .console ol.steps { grid-template-columns: repeat(5, minmax(0, 1fr)); max-width: none; margin-top: 36px; text-align: left; }
+  .console ol.steps li { grid-template-columns: 1fr; gap: 8px; }
+  .console .more { margin-top: 26px; font-weight: 600; }
+  .console .more a { text-underline-offset: 4px; }
+
+  /* members */
+  .people { background: var(--grey); padding-block: 100px; text-align: center; }
+  .people p.body { margin-left: auto; margin-right: auto; }
+  .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 44px; text-align: left; }
+  .person { background: #fff; border-radius: 16px; padding: 22px; }
+  .person .top { display: flex; gap: 12px; align-items: center; }
+  .person .av { width: 52px; height: 52px; border-radius: 50%; background: #e5e5ea; display: grid; place-items: center; font-weight: 700; }
+  .person b { display: block; }
+  .person small { color: #6e6e73; font-size: 13.5px; }
+  .person .res { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin-top: 16px; font-variant-numeric: tabular-nums; }
+  .person .res small { font-size: 14px; font-weight: 500; letter-spacing: 0; }
+  .person a { display: inline-block; margin-top: 10px; font-size: 14px; font-weight: 600; text-underline-offset: 3px; }
+  .people .note { font-size: 13px; color: #8e8e93; margin-top: 20px; }
+
+  /* pricing */
+  .pricing { padding-block: 110px; }
+  .pricing .head { text-align: center; }
+  .pricing .head p.body { margin-left: auto; margin-right: auto; }
+  .cycle { display: inline-flex; background: var(--grey); border-radius: 10px; padding: 3px; margin-top: 28px; flex-wrap: wrap; justify-content: center; }
+  .cycle button { height: 38px; padding: 0 16px; border-radius: 8px; border: 0; background: none; font: inherit; font-weight: 600; font-size: 14px; color: var(--ink); cursor: pointer; }
+  .cycle button.on { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+  .cycle button small { color: var(--ok); font-weight: 700; margin-left: 4px; }
+  .tiers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 36px; }
+  .tier { border: 1px solid #e5e5ea; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 4px; position: relative; }
+  .tier.pick { border: 2px solid var(--ink); padding: 23px; }
+  .tier .pk { position: absolute; top: -12px; left: 22px; background: var(--yellow); font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 99px; }
+  .tier .nm { font-weight: 700; font-size: 19px; }
+  .tier .for { color: #6e6e73; font-size: 14px; min-height: 2.9em; }
+  .tier .pr { font-weight: 800; font-size: 36px; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; margin-top: 10px; line-height: 1.1; }
+  .tier .pr small { font-size: 15px; font-weight: 500; color: #6e6e73; letter-spacing: 0; }
+  .tier .was { font-size: 13px; color: #8e8e93; min-height: 1.4em; font-variant-numeric: tabular-nums; }
+  .tier .was s { margin-right: 6px; }
+  .tier ul { list-style: none; padding: 14px 0 0; margin: 10px 0 0; border-top: 1px solid #e5e5ea; display: grid; gap: 8px; font-size: 14px; }
+  .tier li { display: grid; grid-template-columns: 18px 1fr; gap: 8px; }
+  .tier li svg { width: 16px; height: 16px; color: var(--ok); margin-top: 3px; }
+  .wl { margin-top: 14px; background: var(--dark); color: #fff; border-radius: 16px; padding: 28px; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto; gap: 32px; align-items: center; }
+  .wl h3 { font-size: 24px; margin: 0; letter-spacing: -0.02em; }
+  .wl p { margin: 8px 0 0; color: #c7c7cc; font-size: 15px; }
+  .wl ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; font-size: 14px; color: #e5e5ea; }
+  .wl li::before { content: "✓"; color: var(--yellow); margin-right: 8px; font-weight: 700; }
+  .wl .pr { font-weight: 800; font-size: 30px; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; line-height: 1.15; text-align: right; white-space: nowrap; }
+  .wl .pr small { display: block; font-size: 13px; font-weight: 500; color: #a1a1a6; letter-spacing: 0; }
+  .calc { margin-top: 48px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+  .calc .box { background: var(--grey); border-radius: 16px; padding: 26px; min-width: 0; }
+  .calc h3 { font-size: 22px; margin: 0 0 18px; letter-spacing: -0.02em; }
+  .field { margin-bottom: 20px; }
+  .field label { display: flex; justify-content: space-between; font-weight: 600; font-size: 14.5px; margin-bottom: 6px; }
+  .field label b { font-size: 19px; font-variant-numeric: tabular-nums; }
+  .field input[type=range] { width: 100%; accent-color: var(--ink); }
+  .ticks { display: flex; justify-content: space-between; font-size: 12px; color: #8e8e93; font-variant-numeric: tabular-nums; }
+  .seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .seg button { height: 40px; border-radius: 9px; border: 1px solid #d1d1d6; background: #fff; font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; color: var(--ink); }
+  .seg button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .tog { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-top: 1px solid #dedee3; cursor: pointer; }
+  .tog input { width: 18px; height: 18px; accent-color: var(--ink); margin-top: 3px; flex: none; }
+  .tog span { font-size: 14.5px; font-weight: 600; }
+  .tog small { display: block; color: #6e6e73; font-size: 13px; font-weight: 400; }
+  .stepper { display: inline-flex; align-items: center; border: 1px solid #d1d1d6; border-radius: 9px; overflow: hidden; background: #fff; }
+  .stepper button { width: 40px; height: 38px; border: 0; background: #fff; font-size: 18px; cursor: pointer; color: var(--ink); }
+  .stepper output { width: 40px; text-align: center; font-weight: 700; font-size: 16px; }
+  .quote { background: #fff !important; border: 2px solid var(--ink); }
+  .quote .plan { font-size: 14px; color: #6e6e73; }
+  .quote .big { font-weight: 800; font-size: 52px; letter-spacing: -0.04em; line-height: 1; margin: 6px 0 4px; font-variant-numeric: tabular-nums; }
+  .quote .big small { font-size: 17px; font-weight: 500; color: #6e6e73; letter-spacing: 0; }
+  .quote table { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 14.5px; font-variant-numeric: tabular-nums; }
+  .quote td { padding: 10px 0; border-top: 1px solid #e5e5ea; }
+  .quote td:last-child { text-align: right; font-weight: 600; }
+  .quote tr.tot td { font-weight: 800; font-size: 17px; border-top: 2px solid var(--ink); }
+  .quote tr.save td { color: var(--ok); }
+  .quote .gst { font-size: 12.5px; color: #8e8e93; margin: 10px 0 0; }
+  .addons { margin-top: 44px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+  .addons b { display: block; font-size: 15px; }
+  .addons span { color: #6e6e73; font-size: 14px; }
+
+  /* everything */
+  .every { background: var(--grey); padding-block: 100px; text-align: center; }
+  .every .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-top: 44px; text-align: left; }
+  .every h3 { font-size: 19px; margin: 0 0 10px; }
+  .every ul { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 28px; }
+  .every li { break-inside: avoid; padding: 9px 0; border-top: 1px solid #dcdce1; font-size: 15px; font-weight: 500; }
+  .every .go { margin-top: 44px; }
+  .btn { display: inline-flex; align-items: center; height: 50px; padding: 0 26px; border-radius: 10px; background: var(--ink); color: #fff; font-weight: 600; text-decoration: none; }
+
+  footer { background: var(--dark); color: #c7c7cc; padding-block: 56px 40px; font-size: 14px; }
+  footer .in { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 28px; }
+  footer h4 { color: #fff; font-size: 14px; margin: 0 0 10px; }
+  footer a, footer button { display: block; text-decoration: none; padding: 3px 0; color: inherit; background: none; border: 0; font: inherit; cursor: pointer; text-align: left; }
+  footer a:hover, footer button:hover { color: #fff; }
+  footer .logo { color: #fff; }
+  footer .copy { grid-column: 1 / -1; border-top: 1px solid #333; padding-top: 20px; font-size: 13px; color: #8e8e93; }
+
+  @media (max-width: 1080px) {
+    :root { --s: .72; --ls: .6; }
+    .tiers, .nums .grid, .addons { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .wl { grid-template-columns: 1fr; } .wl .pr { text-align: left; }
+    .console ol.steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (max-width: 860px) {
+    .band .in, .band.flip .in { grid-template-columns: 1fr; gap: 48px; }
+    .band.flip .copy { order: 0; }
+    .slot { margin: 0 auto; }
+    .calc, .every .cols { grid-template-columns: 1fr; }
+    .cards { grid-template-columns: 1fr 1fr; }
+    .nav nav { gap: 20px; font-size: 14px; }
+    :root { --ls: calc((100vw - 68px) / 1280); }
+  }
+  @media (max-width: 560px) {
+    :root { --s: .74; --ls: calc((100vw - 52px) / 1280); }
+    .nav nav a:not(.keep) { display: none; }
+    .hero .in { padding-block: 96px 90px; }
+    .band, .people, .pricing, .every, .console { padding-block: 64px; }
+    .tiers, .nums .grid, .addons, .cards, footer .in, .console ol.steps { grid-template-columns: 1fr; }
+    .every ul { columns: 1; }
+    .seg { grid-template-columns: repeat(2, 1fr); }
+    .lid { padding: 6px; border-radius: 10px 10px 3px 3px; }
+    .base { margin: 0 -10px; height: 9px; }
+    .laptop { width: calc(1280px * var(--ls) + 12px); }
+    .quote .big { font-size: 42px; }
+  }
+</style>
+
+<header class="nav"><div class="in">
+  <a class="logo" href="#top"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg></i>fitcheq</a>
+  <nav><a href="#how">Learn more</a><a href="#owners">For owners</a><a class="keep" href="#pricing">Pricing</a></nav>
+</div></header>
+
+<main id="top">
+  <section class="hero"><canvas id="floor" aria-hidden="true"></canvas><div class="in">
+    <h1 class="t-xl">Eat to plan.<br>Train to plan.</h1>
+    <p>fitcheq is the simplest way for your members to follow the diet and workouts their coach sets. Prepared for Firm Fit Factory.</p>
+    <div class="badges">
+      <a class="badge" href="member.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg><span><small>Try the</small><b>Member app</b></span></a>
+      <a class="badge" href="admin.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M2 19.5h20"/></svg><span><small>Open the</small><b>Owner console</b></span></a>
+    </div>
+    <div class="for">Free for members. One plan for the gym.</div>
+  </div></section>
+
+  <section class="band" id="how"><div class="in">
+    <div class="copy">
+      <h2 class="t-l">Meals. Workout.<br>Ticked off.</h2>
+      <p class="body">Every member opens the app to one screen: today’s meals, today’s workout and today’s classes.</p>
+      <ol class="steps" id="st-today">
+        <li data-step><span><b>Open Today</b>Their plan for the day, nothing else.</span></li>
+        <li data-step><span><b>Tick a meal when it’s eaten</b>One tap. No calorie counting.</span></li>
+        <li data-step><span><b>Tap Skip if they missed one</b>Coaches see it the same minute.</span></li>
+        <li data-step><span><b>Finish the workout</b>Exercises, sets and reps from their PT.</span></li>
+        <li data-step><span><b>Book a class</b>Live spots, full classes close themselves.</span></li>
+      </ol>
+      <p class="hint">This is the real prototype playing. Tap the phone to try it yourself.</p>
+    </div>
+    <div class="slot"><div class="fq-phone" id="f-today"><div class="scr" id="ph-today"></div></div></div>
+  </div></section>
+
+  <section class="band grey flip"><div class="in">
+    <div class="copy">
+      <h2 class="t-l">The diet chart,<br>day by day.</h2>
+      <p class="body">The coach uploads each member’s chart every week. Members see three days back, today and three days ahead.</p>
+      <ol class="steps" id="st-diet">
+        <li data-step><span><b>See today’s meals</b>Indian food, veg, egg or non-veg, with calories and protein.</span></li>
+        <li data-step><span><b>Look back at yesterday</b>Green, amber and red dots show how each day went.</span></li>
+        <li data-step><span><b>Forgot to log? Tick it later</b>The last three days stay open.</span></li>
+        <li data-step><span><b>Check what’s coming</b>Plan the shopping for the days ahead.</span></li>
+      </ol>
+    </div>
+    <div class="slot"><div class="fq-phone" id="f-diet"><div class="scr" id="ph-diet"></div></div></div>
+  </div></section>
+
+  <section class="band"><div class="in">
+    <div class="copy">
+      <h2 class="t-l">See the<br>finish line.</h2>
+      <p class="body">Start weight, today’s weight and the target. Then one slider shows what following the plan really does.</p>
+      <ol class="steps" id="st-prog">
+        <li data-step><span><b>Start, now, target</b>Progress in kilos and percent.</span></li>
+        <li data-step><span><b>Weigh-ins and projection</b>Solid line is real, dashed line is where they’re heading.</span></li>
+        <li data-step><span><b>What if they follow it every day?</b>Kilos in 30 days and the date they reach their goal.</span></li>
+        <li data-step><span><b>And only half the days?</b>The goal moves months away. That’s the point.</span></li>
+      </ol>
+    </div>
+    <div class="slot"><div class="fq-phone" id="f-prog"><div class="scr" id="ph-prog"></div></div></div>
+  </div></section>
+
+  <section class="band grey flip"><div class="in">
+    <div class="copy">
+      <h2 class="t-l">The gym, in<br>their pocket.</h2>
+      <p class="body">Their coach, every trainer, the equipment on the floor, their bills and your offers.</p>
+      <ol class="steps" id="st-gym">
+        <li data-step><span><b>Their PT’s details</b>Experience, certifications, floor hours, WhatsApp.</span></li>
+        <li data-step><span><b>Equipment</b>What’s new and what’s under repair.</span></li>
+        <li data-step><span><b>Every trainer</b>The whole team in one list.</span></li>
+        <li data-step><span><b>Bills and offers</b>Renewal date, 5% off for paying a week early, your promotions.</span></li>
+      </ol>
+    </div>
+    <div class="slot"><div class="fq-phone" id="f-gym"><div class="scr" id="ph-gym"></div></div></div>
+  </div></section>
+
+  <section class="nums"><div class="in">
+    <h2 class="t-m">fitcheq in Numbers</h2>
+    <div class="grid">
+      <div><h3>Meals</h3><div class="n">5</div><p>a day, each logged with one tap</p></div>
+      <div><h3>Diet window</h3><div class="n">7 days</div><p>three back, today, three ahead</p></div>
+      <div><h3>Roles</h3><div class="n">3</div><p>owner, trainer and member in one system</p></div>
+      <div><h3>Cost to members</h3><div class="n">₹0</div><p>the gym pays one plan, members download free</p></div>
+    </div>
+    <p class="foot">Every meal, workout and weigh-in your members log shows up on your screen the moment they log it.</p>
+  </div></section>
+
+  <section class="console" id="owners"><div class="in">
+    <h2 class="t-l">Your gym. One screen.</h2>
+    <p class="body">Members, trainers, diet charts, sessions, equipment, promotions and billing. Everything you change appears in the member app.</p>
+    <div class="laptop"><div class="lid"><div class="lap-slot" id="f-admin"><div id="console"></div></div></div><div class="base"></div></div>
+    <ol class="steps" id="st-admin">
+      <li data-step><span><b>Who needs attention</b>Low diet scores and dues, first.</span></li>
+      <li data-step><span><b>Any member’s progress</b>Chart, forecast and target date.</span></li>
+      <li data-step><span><b>Edit a diet chart</b>Click a meal, change it, publish.</span></li>
+      <li data-step><span><b>Send a promotion</b>Straight to every member’s phone.</span></li>
+      <li data-step><span><b>Chase renewals</b>One-click reminders.</span></li>
+    </ol>
+    <p class="more"><a href="admin.html" target="_blank" rel="noopener">Open the owner console full screen</a></p>
+  </div></section>
+
+  <section class="people"><div class="in">
+    <h2 class="t-l">fitcheq is for every member</h2>
+    <p class="body">Fat loss, muscle gain or recomposition. Veg or non-veg. Each member gets their own coach, their own chart and their own forecast.</p>
+    <div class="cards" id="cards"></div>
+    <p class="note">Sample members from this demo. Open any of them to see their app.</p>
+  </div></section>
+
+  <section class="pricing" id="pricing"><div class="in">
+    <div class="head">
+      <h2 class="t-l">Simple pricing</h2>
+      <p class="body">One setup fee, then a monthly plan by number of active members. Pay for longer, pay less. Prices before 18% GST.</p>
+      <div class="cycle" id="cycle" role="group" aria-label="Billing cycle"><button type="button" data-c="1" class="on">Monthly</button><button type="button" data-c="3">Quarterly<small>−5%</small></button><button type="button" data-c="6">Half-yearly<small>−10%</small></button><button type="button" data-c="12">Annual<small>−20%</small></button></div>
+    </div>
+    <div class="tiers" id="tiers"></div>
+    <div class="wl">
+      <div><h3>White-label: your own app</h3><p>Firm Fit Factory’s name and icon on the Play Store and App Store, your domain, your WhatsApp sender. fitcheq stays invisible.</p></div>
+      <ul><li>Up to 1,500 active members</li><li>Your colours, logo and app icon</li><li>Your domain for the console</li><li>Priority support, same-day fixes</li><li>App store fees paid by the gym</li></ul>
+      <div class="pr">₹1,49,999<small>one-time build</small><span id="wl-mo">₹14,999</span><small>per month</small></div>
+    </div>
+    <div class="calc">
+      <div class="box">
+        <h3>Work out your price</h3>
+        <div class="field"><label for="c-mem">Active members <b id="c-mem-out">300</b></label><input id="c-mem" type="range" min="20" max="2000" step="10" value="300"><div class="ticks"><span>20</span><span>500</span><span>1,000</span><span>1,500</span><span>2,000</span></div></div>
+        <div class="field"><label>Billing cycle</label><div class="seg" id="c-cycle"><button type="button" data-c="1">Monthly</button><button type="button" data-c="3">Quarterly</button><button type="button" data-c="6">Half-yearly</button><button type="button" data-c="12" class="on">Annual</button></div></div>
+        <div class="field" style="display:flex;justify-content:space-between;align-items:center"><label style="margin:0">Branches</label><span class="stepper"><button type="button" id="c-bminus" aria-label="Fewer branches">−</button><output id="c-br">1</output><button type="button" id="c-bplus" aria-label="More branches">+</button></span></div>
+        <label class="tog"><input id="c-early" type="checkbox" checked><span>Pay each invoice 7 days early<small>Another 3% off every invoice paid a week before its due date.</small></span></label>
+        <label class="tog"><input id="c-wl" type="checkbox"><span>White-label app<small>Your name on the app stores. Replaces the standard plan.</small></span></label>
+      </div>
+      <div class="box quote" id="quote"></div>
+    </div>
+    <div class="addons">
+      <div><b>Extra branches</b><span>60% of the plan price each. Members can train at any branch.</span></div>
+      <div><b>WhatsApp messages</b><span>Billed at Meta’s rate. Notifications inside the app are free.</span></div>
+      <div><b>Online payments</b><span>UPI and cards go through your own gateway account, at the gateway’s fees.</span></div>
+      <div><b>No lock-in</b><span>Cancel monthly plans with 30 days’ notice. Your data is exported to Excel.</span></div>
+    </div>
+  </div></section>
+
+  <section class="every"><div class="in">
+    <h2 class="t-l">Everything you need.<br>Nothing you don’t.</h2>
+    <div class="cols">
+      <div><h3>Member app</h3><ul><li>Today’s meals and workout</li><li>Diet 3 days back and ahead</li><li>Followed or skipped</li><li>Class booking</li><li>Weight chart</li><li>“What if?” goal slider</li><li>PT profile</li><li>Trainer list</li><li>Equipment status</li><li>Workout formats</li><li>Bills and early-pay discount</li><li>Offers and notifications</li></ul></div>
+      <div><h3>Owner console</h3><ul><li>Add members</li><li>Trainer profiles</li><li>Weekly timetable</li><li>Diet chart per member</li><li>CSV diet upload</li><li>Workout formats</li><li>Equipment register</li><li>Promotions</li><li>Renewal reminders</li><li>Adherence by coach</li><li>Weight check-ins</li><li>Gym profile and hours</li></ul></div>
+    </div>
+    <div class="go"><a class="btn" href="member.html" target="_blank" rel="noopener">Try fitcheq now</a></div>
+  </div></section>
+</main>
+
+<footer><div class="in">
+  <div><a class="logo" href="#top"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg></i>fitcheq</a><p style="margin:12px 0 0;max-width:24em">Member app and owner console for gyms with personal training and diet coaching.</p></div>
+  <div><h4>Product</h4><a href="#how">Member app</a><a href="#owners">Owner console</a><a href="#pricing">Pricing</a></div>
+  <div><h4>Demo</h4><a href="member.html" target="_blank" rel="noopener">Open member app</a><a href="admin.html" target="_blank" rel="noopener">Open owner console</a><button type="button" id="reset">Reset demo data</button></div>
+  <div><h4>Prepared for</h4><span>Firm Fit Factory</span></div>
+  <div class="copy">© 2026 fitcheq. Preview build with sample members and figures.</div>
+</div></footer>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script src="admin.js"></script>
+<script src="demo.js"></script>
+<script>
+  // hero: dark rubber gym floor, drawn once
+  (function () {
+    const c = document.getElementById('floor'), x = c.getContext('2d');
+    function draw() {
+      const w = c.width = c.offsetWidth, h = c.height = c.offsetHeight; if (!w || !h) return;
+      x.fillStyle = '#1e2a2f'; x.fillRect(0, 0, w, h);
+      const img = x.getImageData(0, 0, w, h), d = img.data;
+      for (let i = 0; i < d.length; i += 4) { const n = (Math.random() - 0.5) * 26; d[i] += n; d[i + 1] += n; d[i + 2] += n; }
+      x.putImageData(img, 0, 0);
+      x.strokeStyle = 'rgba(0,0,0,.35)'; x.lineWidth = 2;
+      const tile = 260; x.save(); x.translate(w / 2, h / 2); x.rotate(-0.12);
+      for (let i = -8; i <= 8; i++) { x.beginPath(); x.moveTo(i * tile, -h * 2); x.lineTo(i * tile, h * 2); x.stroke(); x.beginPath(); x.moveTo(-w * 2, i * tile); x.lineTo(w * 2, i * tile); x.stroke(); }
+      x.restore();
+      const g = x.createRadialGradient(w / 2, h / 2, h * 0.2, w / 2, h / 2, Math.max(w, h) * 0.8);
+      g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.55)'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+    }
+    draw(); let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(draw, 200); });
+  })();
+
+  const st = FQ.state(), U = FQ.util;
+  const today = FQApp.mount(document.getElementById('ph-today'), { member: 'm1', screen: 'today' });
+  const diet = FQApp.mount(document.getElementById('ph-diet'), { member: 'm2', screen: 'diet' });
+  const prog = FQApp.mount(document.getElementById('ph-prog'), { member: 'm3', screen: 'progress' });
+  const gym = FQApp.mount(document.getElementById('ph-gym'), { member: 'm4', screen: 'gym' });
+  const admin = FQAdmin.mount(document.getElementById('console'), { view: 'overview' });
+  const keep = (mid) => { const s = FQ.state(); return JSON.stringify({ l: s.logs[mid], w: s.wlogs[mid], b: s.bookings[mid], i: s.invoices[mid] }); };
+  const restore = (mid, snap) => { const s = FQ.state(), o = JSON.parse(snap); s.logs[mid] = o.l || {}; s.wlogs[mid] = o.w || {}; s.bookings[mid] = o.b || {}; s.invoices[mid] = o.i; };
+  const k0 = U.key(U.T);
+
+  const snap1 = keep('m1');
+  FQDemo.play({ frame: document.getElementById('f-today'), list: document.getElementById('st-today'),
+    onReset() { restore('m1', snap1); const s = FQ.state(); (s.logs.m1 = s.logs.m1 || {})[k0] = {}; delete s.wlogs.m1[k0]; s.bookings.m1 = {}; today.set({ screen: 'today' }); },
+    steps: [
+      { mark: 0, top: '.fa-scroll', wait: 1600 },
+      { mark: 1, tap: '[data-act="mlog"][data-meal="breakfast"][data-v="done"]', wait: 700 },
+      { tap: '[data-act="mlog"][data-meal="midmorning"][data-v="done"]', wait: 1100 },
+      { mark: 2, tap: '[data-act="mlog"][data-meal="snack"][data-v="skip"]', wait: 1300 },
+      { mark: 3, tap: '[data-act="wlog"][data-v="done"]', wait: 1500 },
+      { mark: 4, tap: '[data-act="book"]:not([disabled])', wait: 1800, hide: true },
+    ] });
+
+  const snap2 = keep('m2');
+  FQDemo.play({ frame: document.getElementById('f-diet'), list: document.getElementById('st-diet'),
+    onReset() { restore('m2', snap2); diet.set({ screen: 'diet', dayOff: 0 }); },
+    steps: [
+      { mark: 0, top: '.fa-scroll', wait: 1800 },
+      { mark: 1, tap: '[data-act="day"][data-o="-1"]', wait: 1400 },
+      { tap: '[data-act="day"][data-o="-2"]', wait: 1200 },
+      { mark: 2, tap: () => document.querySelector('#f-diet .fa-chk:not(.on)'), wait: 1600 },
+      { mark: 3, tap: '[data-act="day"][data-o="1"]', wait: 1300 },
+      { tap: '[data-act="day"][data-o="2"]', wait: 1400, hide: true },
+    ] });
+
+  FQDemo.play({ frame: document.getElementById('f-prog'), list: document.getElementById('st-prog'),
+    onReset() { prog.set({ screen: 'progress', adh: null }); const s = document.querySelector('#f-prog .fa-scroll'); if (s) s.scrollTop = 0; },
+    steps: [
+      { mark: 0, wait: 1800 },
+      { mark: 1, scroll: '[data-slot="chart"]', wait: 1800 },
+      { mark: 2, scroll: '[data-sec="whatif"]', wait: 300 },
+      { slide: ['.fa-range', 100], wait: 1800 },
+      { mark: 3, slide: ['.fa-range', 50], wait: 2000 },
+      { slide: ['.fa-range', 76], wait: 900, hide: true },
+    ] });
+
+  const snap4 = keep('m4');
+  FQDemo.play({ frame: document.getElementById('f-gym'), list: document.getElementById('st-gym'),
+    onReset() { restore('m4', snap4); gym.set({ screen: 'gym', gymTab: 'coach', sheet: null }); },
+    steps: [
+      { mark: 0, scroll: '.fa-seg', wait: 1800 },
+      { mark: 1, tap: '[data-act="gtab"][data-v="eq"]', wait: 900 },
+      { scroll: '.fa-tag', wait: 1400 },
+      { mark: 2, top: '.fa-scroll' },
+      { tap: '[data-act="gtab"][data-v="team"]', wait: 1500 },
+      { mark: 3, tap: '[data-go="me"]', wait: 1500 },
+      { tap: '[data-act="sheet"][data-v="pay"]', wait: 1700 },
+      { tap: '.fa-sheet .fa-btn:not(.dark)', wait: 800, hide: true },
+    ] });
+
+  FQDemo.play({ frame: document.getElementById('f-admin'), list: document.getElementById('st-admin'),
+    onReset() { admin.set({ view: 'overview', drawer: null, edit: null }); },
+    steps: [
+      { mark: 0, wait: 2000 },
+      { mark: 1, tap: '.ad-li[data-act="drawer"]', wait: 2600 },
+      { fn: () => admin.set({ drawer: null }), wait: 300 },
+      { mark: 2, tap: '[data-go="diet"]', wait: 900 },
+      { tap: '.ad-cell', wait: 2000 },
+      { fn: () => admin.set({ edit: null }), wait: 300 },
+      { mark: 3, tap: '[data-go="promos"]', wait: 2000 },
+      { mark: 4, tap: '[data-go="billing"]', wait: 2200, hide: true },
+    ] });
+
+  // sample member cards
+  document.getElementById('cards').innerHTML = st.members.slice(0, 6).map((m) => {
+    const t = st.trainers.find((x) => x.id === m.pt), d = m.current - m.startWeight;
+    return '<div class="person"><div class="top"><span class="av">' + FQ.initials(m.name) + '</span><div><b>' + FQ.esc(m.name) + '</b><small>' + FQ.goalLabel(m.goal) + ' · coach ' + FQ.esc(t.name.split(' ')[0]) + '</small></div></div>' +
+      '<div class="res">' + (d < 0 ? '−' : '+') + Math.abs(d).toFixed(1) + ' kg <small>in ' + m.weeks + ' weeks · ' + FQ.dietLabel(m.diet).toLowerCase() + '</small></div><a href="member.html#' + m.id + '" target="_blank" rel="noopener">See ' + FQ.esc(m.name.split(' ')[0]) + '’s app</a></div>';
+  }).join('');
+  document.getElementById('reset').addEventListener('click', () => FQ.reset());
+
+  // ---------- pricing ----------
+  const inr = U.inr, DISC = { 1: 0, 3: 0.05, 6: 0.10, 12: 0.20 }, CYC = { 1: 'month', 3: 'quarter', 6: 'half-year', 12: 'year' };
+  const chk = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.2 4.2L19 7"/></svg>';
+  const TIERS = [
+    { name: 'Setup', price: 24999, once: true, for: 'One-time, for every gym', feats: ['Member, trainer and class import', 'Diet templates for each coach', 'Your gym’s details in the app', 'Two on-site staff trainings', '50% off with an annual plan'] },
+    { name: 'Studio', price: 2999, for: 'Up to 150 active members', feats: ['Member app, Android and iPhone', 'Diet, workout and class logging', 'Progress and “What if?”', 'Owner console, 2 trainer logins', 'Email support'] },
+    { name: 'Club', price: 5999, pick: true, for: 'Up to 400 active members', feats: ['Everything in Studio', 'Unlimited trainer logins', 'CSV diet upload', 'Promotions by audience', 'WhatsApp support, 4-hour reply'] },
+    { name: 'Pro', price: 9999, for: 'Up to 1,000 members, then ₹9 per extra member', feats: ['Everything in Club', 'Multi-branch dashboard', 'Coach performance reports', 'Data export to Excel', 'Named account manager'] },
+  ];
+  let cycle = 1;
+  function tiers() {
+    document.getElementById('tiers').innerHTML = TIERS.map((t) => {
+      const d = t.once ? 0 : DISC[cycle], half = t.once && cycle === 12;
+      const price = t.once ? (half ? t.price / 2 : t.price) : t.price * (1 - d);
+      return '<div class="tier' + (t.pick ? ' pick' : '') + '">' + (t.pick ? '<span class="pk">Most gyms</span>' : '') + '<div class="nm">' + t.name + '</div><div class="for">' + t.for + '</div>' +
+        '<div class="pr">' + inr(price) + '<small>' + (t.once ? ' once' : ' /month') + '</small></div>' +
+        '<div class="was">' + (t.once ? (half ? '<s>' + inr(t.price) + '</s>with annual billing' : '') : d ? '<s>' + inr(t.price) + '</s>' + inr(price * cycle) + ' each ' + CYC[cycle] : 'Billed monthly') + '</div>' +
+        '<ul>' + t.feats.map((f) => '<li>' + chk + '<span>' + f + '</span></li>').join('') + '</ul></div>';
+    }).join('');
+    document.getElementById('wl-mo').textContent = inr(14999 * (1 - DISC[cycle]));
+  }
+  document.getElementById('cycle').addEventListener('click', (e) => { const b = e.target.closest('[data-c]'); if (!b) return; cycle = +b.dataset.c; document.querySelectorAll('#cycle button').forEach((x) => x.classList.toggle('on', x === b)); tiers(); });
+  const C = { mem: 300, cyc: 12, br: 1, early: true, wl: false };
+  function quote() {
+    const m = C.mem; let plan, base;
+    if (C.wl) { plan = 'White-label'; base = 14999 + Math.max(0, m - 1500) * 8; }
+    else if (m <= 150) { plan = 'Studio'; base = 2999; } else if (m <= 400) { plan = 'Club'; base = 5999; } else if (m <= 1000) { plan = 'Pro'; base = 9999; } else { plan = 'Pro'; base = 9999 + (m - 1000) * 9; }
+    const list = base * (1 + 0.6 * (C.br - 1)), d = DISC[C.cyc], e = C.early ? 0.03 : 0;
+    const monthly = list * (1 - d) * (1 - e);
+    const setup = C.wl ? 149999 : C.cyc === 12 ? 12499.5 : 24999;
+    const year = monthly * 12 + setup, saved = list * 12 + (C.wl ? 149999 : 24999) - year;
+    document.getElementById('quote').innerHTML = '<div class="plan">' + plan + ' plan · ' + m.toLocaleString('en-IN') + ' members' + (C.br > 1 ? ' × ' + C.br + ' branches' : '') + '</div>' +
+      '<div class="big">' + inr(monthly) + '<small> /month</small></div><div class="plan">About ' + inr(monthly / (m * C.br)) + ' per member a month' + (C.cyc > 1 ? ' · ' + inr(monthly * C.cyc) + ' billed each ' + CYC[C.cyc] : '') + '</div>' +
+      '<table><tbody><tr><td>' + plan + ' plan, list price</td><td>' + inr(list) + ' /mo</td></tr>' +
+      (d ? '<tr class="save"><td>' + { 3: 'Quarterly', 6: 'Half-yearly', 12: 'Annual' }[C.cyc] + ' billing</td><td>−' + Math.round(d * 100) + '%</td></tr>' : '') +
+      (e ? '<tr class="save"><td>Paid 7 days early</td><td>−3%</td></tr>' : '') +
+      '<tr><td>' + (C.wl ? 'White-label app build' : 'Setup' + (C.cyc === 12 ? ' (50% off with annual)' : '')) + '</td><td>' + inr(setup) + ' once</td></tr>' +
+      '<tr class="tot"><td>First year</td><td>' + inr(year) + '</td></tr><tr><td>Every year after</td><td>' + inr(monthly * 12) + '</td></tr>' +
+      (saved > 0 ? '<tr class="save"><td>You save in year one</td><td>' + inr(saved) + '</td></tr>' : '') +
+      '</tbody></table><p class="gst">Before 18% GST. First year with GST: ' + inr(year * 1.18) + '.</p>';
+    document.getElementById('c-mem-out').textContent = m.toLocaleString('en-IN'); document.getElementById('c-br').textContent = C.br;
+  }
+  document.getElementById('c-mem').addEventListener('input', (e) => { C.mem = +e.target.value; quote(); });
+  document.getElementById('c-cycle').addEventListener('click', (e) => { const b = e.target.closest('[data-c]'); if (!b) return; C.cyc = +b.dataset.c; document.querySelectorAll('#c-cycle button').forEach((x) => x.classList.toggle('on', x === b)); quote(); });
+  document.getElementById('c-bminus').addEventListener('click', () => { C.br = Math.max(1, C.br - 1); quote(); });
+  document.getElementById('c-bplus').addEventListener('click', () => { C.br = Math.min(10, C.br + 1); quote(); });
+  document.getElementById('c-early').addEventListener('change', (e) => { C.early = e.target.checked; quote(); });
+  document.getElementById('c-wl').addEventListener('change', (e) => { C.wl = e.target.checked; quote(); });
+  tiers(); quote();
+</script>

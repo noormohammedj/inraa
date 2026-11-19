@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>fitcheq member app</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="app.css">
+<style>
+  html, body { height: 100%; }
+  body { background: var(--surface); color: var(--fg); font-family: var(--text); margin: 0; }
+  .wrap { min-height: 100%; display: flex; gap: 48px; align-items: center; justify-content: center; padding-block: 32px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); box-sizing: border-box; }
+  .side { max-width: 300px; display: flex; flex-direction: column; gap: 16px; }
+  .side a.brand { font-family: var(--display); font-weight: 900; font-size: 26px; letter-spacing: -0.03em; color: var(--fg); text-decoration: none; }
+  .side a.brand span { color: var(--ok); }
+  .side h1 { font-family: var(--display); font-size: 30px; line-height: 1.05; letter-spacing: -0.02em; margin: 0; }
+  .side p { color: var(--muted); margin: 0; line-height: 1.5; }
+  .who { display: flex; flex-direction: column; gap: 6px; }
+  .who label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .who button { display: flex; gap: 10px; align-items: center; text-align: left; padding: 9px 10px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); font: inherit; cursor: pointer; }
+  .who button.on { border-color: var(--fg); box-shadow: 0 0 0 1px var(--fg) inset; }
+  .who button small { display: block; color: var(--muted); font-size: 12px; }
+  .who .av { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: var(--fg); background: var(--surface-2); font-size: 11px; font-weight: 700; flex: none; }
+  .links { display: flex; gap: 14px; font-size: 13px; }
+  .links a, .links button { color: var(--fg); text-decoration: underline; font-weight: 600; text-decoration: none; background: none; border: 0; font: inherit; cursor: pointer; padding: 0; }
+  @media (max-width: 760px) {
+    .wrap { padding: 0; display: block; height: 100%; }
+    .side { display: none; }
+    .fq-phone { width: 100%; height: 100%; border-radius: 0; padding: 0; box-shadow: none; }
+    .fq-phone .scr { border-radius: 0; }
+    .fq-phone .scr::before { display: none; }
+  }
+</style>
+<div class="wrap">
+  <aside class="side">
+    <a class="brand" href="index.html">fitcheq<span>.</span></a>
+    <h1>The member app</h1>
+    <p>Every button works. Log meals, book a class, move the “What if?” slider. Each member below has a different coach, goal and diet.</p>
+    <div class="who" id="who"><label>View as</label></div>
+    <div class="links"><a href="admin.html">Open owner console</a><button id="reset" type="button">Reset demo</button></div>
+  </aside>
+  <div class="fq-phone"><div class="scr" id="app"></div></div>
+</div>
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>
+  const st = FQ.state();
+  const start = (location.hash || '').slice(1);
+  const app = FQApp.mount(document.getElementById('app'), { member: st.members.some((m) => m.id === start) ? start : 'm1' });
+  function list() {
+    const s = FQ.state();
+    document.getElementById('who').innerHTML = '<label>View as</label>' + s.members.slice(0, 6).map((m) => {
+      const t = s.trainers.find((x) => x.id === m.pt);
+      return '<button type="button" data-m="' + m.id + '" class="' + (app.member === m.id ? 'on' : '') + '"><span class="av">' + FQ.initials(m.name) + '</span><span>' + FQ.esc(m.name) + '<small>' + FQ.goalLabel(m.goal) + ' · ' + FQ.esc(t.name.split(' ')[0]) + '</small></span></button>';
+    }).join('');
+  }
+  document.getElementById('who').addEventListener('click', (e) => { const b = e.target.closest('[data-m]'); if (!b) return; app.set({ mid: b.dataset.m, adh: null, dayOff: 0 }); list(); });
+  document.getElementById('reset').addEventListener('click', () => { FQ.reset(); list(); });
+  window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (FQ.state().members.some((m) => m.id === h)) { app.set({ mid: h, adh: null }); list(); } });
+  list();
+</script>

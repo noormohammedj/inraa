@@ -1,0 +1,7 @@
+name = "inraa-proposal"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ALLOWED_ORIGINS = "https://inraasolution.com,https://www.inraasolution.com"

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>fitcheq owner console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="admin.css">
+<style>
+  html, body { height: 100%; margin: 0; }
+  body { background: var(--bg); }
+  #admin { height: 100%; }
+</style>
+<div id="admin"></div>
+<script src="data.js"></script>
+<script src="admin.js"></script>
+<script>
+  const views = ['overview', 'members', 'trainers', 'sessions', 'diet', 'workouts', 'equipment', 'promos', 'billing', 'gym'];
+  const h = location.hash.slice(1);
+  FQAdmin.mount(document.getElementById('admin'), { view: views.includes(h) ? h : 'overview' });
+</script>
