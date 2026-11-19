@@ -22,7 +22,8 @@
   $$('[data-product]').forEach((el) => {
     const k = el.dataset.product, p = C.products[k], ext = /^https?:/.test(p.url);
     el.innerHTML = '<div class="phead"><span class="ico"><svg><use href="#' + ICON[k] + '"/></svg></span><div><h3>' + esc(p.name) + '</h3><small>' + esc(p.tagline) + '</small></div></div>' +
-      '<p>' + esc(p.summary) + '</p><ul>' + p.points.map((x) => '<li>' + check + '<span>' + esc(x) + '</span></li>').join('') + '</ul>' +
+      '<div class="results"><span class="tag">The result for you</span><ul class="fitlist">' + p.results.map((x) => '<li>' + check + '<span>' + esc(x) + '</span></li>').join('') + '</ul></div>' +
+      '<h5>How it gets there</h5><p style="margin-top:6px">' + esc(p.summary) + '</p>' +
       '<div class="price"><b>' + esc(p.price) + '</b> · prices before GST</div>' +
       '<div class="acts"><a class="btn red" href="' + esc(p.url) + '"' + (ext ? ' target="_blank" rel="noopener"' : '') + '>Visit ' + esc(p.name) + '</a><a class="more" href="#start" data-pick="' + k + '">Is it right for me</a></div>';
   });
@@ -96,12 +97,12 @@
 
   function renderProduct(k) {
     const p = C.products[k], ext = /^https?:/.test(p.url), unit = p.yearly ? '/year' : '/month';
-    $('#p-product').innerHTML = '<div class="two"><div><span class="tag">Recommended for you</span><h3 style="margin-top:6px">' + esc(p.name) + ': ' + esc(p.tagline.toLowerCase()) + '</h3><p class="lead" style="font-size:16px;margin-top:10px">' + esc(p.summary) + '</p><ul class="fitlist">' + p.points.map((x) => '<li>' + check + '<span>' + esc(x) + '</span></li>').join('') + '</ul></div>' +
+    $('#p-product').innerHTML = '<div class="two"><div><span class="tag">Recommended for you</span><h3 style="margin-top:6px">' + esc(p.name) + ': ' + esc(p.tagline.toLowerCase()) + '</h3><p class="lead" style="font-size:16px;margin-top:10px">' + esc(p.summary) + '</p><h5 style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--z-green);font-weight:500;margin:18px 0 0">The result for you</h5><ul class="fitlist">' + p.results.map((x) => '<li>' + check + '<span>' + esc(x) + '</span></li>').join('') + '</ul></div>' +
       '<div><div class="plans"><div class="pl"><span>Plan</span><span>Price</span></div>' + p.plans.map((x) => '<div class="pl"><span>' + esc(x[0]) + ' <span style="color:var(--z-muted);font-size:13px">· ' + esc(x[2]) + '</span></span><b>' + (x[1] ? A.inr(x[1]) + unit : 'Free') + '</b></div>').join('') + '</div><p style="font-size:13.5px;color:var(--z-muted);margin:10px 0 0">Prices before 18% GST.</p></div></div>' +
       '<div class="acts"><a class="btn red" href="' + esc(p.url) + '"' + (ext ? ' target="_blank" rel="noopener"' : '') + '>Visit ' + esc(p.name) + '</a><button type="button" class="btn out" id="pp-gen">Get a written proposal</button><a class="more" href="#start" data-pick="custom">My needs are different</a></div>';
     $('#pp-gen').addEventListener('click', () => {
       const html = A.productProposalHTML(k, { biz: '' });
-      showProposal(html, p.name + ' proposal', 'I am interested in ' + p.name + '.');
+      showProposal(html, p.name + ' result plan', 'I am interested in ' + p.name + '.');
     });
   }
 
@@ -133,7 +134,7 @@
 
   async function makeProposal() {
     steps(3);
-    $('#prop-out').innerHTML = '<div class="doc"><span class="busy"><i></i>Writing the technical and commercial proposal…</span></div>';
+    $('#prop-out').innerHTML = '<div class="doc"><span class="busy"><i></i>Writing your result plan: results, technical approach and price…</span></div>';
     $('#prop-out').scrollIntoView({ behavior: 'smooth', block: 'start' });
     let html = A.proposalHTML(rfp), note = '';
     if (C.aiEndpoint) {
@@ -147,7 +148,7 @@
   function showProposal(html, subject, oneLine) {
     $('#prop-out').innerHTML = '<div class="doc" id="proposal">' + html + '</div>' +
       '<div class="docbar"><button type="button" class="btn out" id="pr-copy">Copy text</button><button type="button" class="btn out" id="pr-print">Download PDF</button></div>' +
-      '<div class="closing"><div><h3>Happy with this? Let’s talk.</h3><p>Call or message ' + esc(C.phoneDisplay) + ', or email ' + esc(C.email) + '. Quote ' + esc(subject.split(' for ')[0]) + ' and we’ll have it open.</p></div>' +
+      '<div class="closing"><div><h3>Like this result plan? Let’s talk.</h3><p>Call or message ' + esc(C.phoneDisplay) + ', or email ' + esc(C.email) + '. Quote ' + esc(subject.split(' for ')[0]) + ' and we’ll have it open.</p></div>' +
       '<div class="acts"><a class="btn red" href="' + tel + '">Call the team</a><a class="btn green" href="' + wa('Hi Inraa team. ' + oneLine + ' Can we schedule a call?') + '" target="_blank" rel="noopener">WhatsApp</a><a class="btn out" style="background:transparent;color:#fff;border-color:#fff" id="pr-mail" href="#">Email us</a></div></div>';
     const text = A.plainText(html);
     $('#pr-mail').href = mail(subject, 'Hi Inraa team,\n\n' + oneLine + '\n\nPlease get in touch to discuss.\n\n' + (rfp && current === 'custom' ? 'My description:\n' + rfp.problem + '\n\n' : '') + 'Thanks');

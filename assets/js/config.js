@@ -12,7 +12,7 @@ window.INRAA = {
   aiEndpoint: '',
 
   // Where the Fitcheq site lives (its own repo: github.com/noormohammedj/fitcheq). Keep the trailing slash.
-  fitcheqUrl: 'https://noormohammedj.github.io/fitcheq/',
+  fitcheqUrl: 'https://fitcheq.inraasolution.com/',
 
   products: {
     plotskart: {
@@ -23,6 +23,7 @@ window.INRAA = {
       pick: 'I sell plots or flats',
       price: 'Free to start · Team ₹4,999/month',
       summary: 'Upload your layout drawing and Plotskart turns it into a live, colour-coded map your whole sales team shares. Book plots, take payments, send WhatsApp reminders and see profit by project.',
+      results: ['No double bookings: every salesperson sees the same live map', 'Instalments come in on time because reminders go out by themselves', 'Profit per project without waiting for the accountant'],
       points: ['AI reads your layout PDF or photo into plot boxes', 'Live availability on every phone, no double booking', 'Instalments, receipts and WhatsApp/SMS reminders', 'Project profit and loss for the owner only'],
       plans: [['Free', 0, '1 login, 2 projects'], ['Team', 4999, '6 logins, 5 projects'], ['Business', 9999, '17 logins, 10 projects']],
       setup: 17999,
@@ -35,6 +36,7 @@ window.INRAA = {
       pick: 'I run a mahal or venue',
       price: 'From ₹1,999/year · zero commission',
       summary: 'List your kalyana mandapam or banquet hall with photos, rules and every charge. Families see the full bill with GST before they book, and one calendar keeps app and phone bookings from clashing.',
+      results: ['More bookings from families searching online, even at night', 'Zero commission: you keep the full booking amount', 'No clashes between phone and app bookings'],
       points: ['Photos, capacity, rules and full price breakdown', 'Seasonal pricing for peak muhurtham dates', 'One calendar for app and phone bookings', 'Reach Tamil families in the Gulf, US, UK and Singapore'],
       plans: [['Local', 1999, 'per property per year'], ['Featured', 9999, 'per property per year'], ['Destination & NRI', 29999, 'per property per year']],
       yearly: true,
@@ -48,6 +50,7 @@ window.INRAA = {
       pick: 'I run a gym or studio',
       price: 'From ₹2,999/month',
       summary: 'Each member gets their own diet chart, workout and classes, and ticks off every meal. Coaches see who is slipping, and owners run trainers, sessions, equipment, offers and renewals from one screen.',
+      results: ['Members see their progress, so they stay and renew', 'Coaches spend time coaching, not chasing diet charts on WhatsApp', 'Renewals and dues collected without awkward calls'],
       points: ['Personal diet for 3 days back and 3 ahead', 'One-tap meal and workout logging', '“What if?” weight forecast for every member', 'Owner console for members, trainers and billing'],
       plans: [['Studio', 2999, 'up to 150 members'], ['Club', 5999, 'up to 400 members'], ['Pro', 9999, 'up to 1,000 members']],
       setup: 24999,

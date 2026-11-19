@@ -1,6 +1,6 @@
 # inraasolution.com
 
-Website for Inraa Solution: the Plotskart, Mandapkart and Fitcheq products, a business picker, and a proposal
+Website for Inraa Solution, a Result as a Service (RaaS) company: the Plotskart, Mandapkart and Fitcheq products, a business picker, and a proposal
 agent that turns a problem statement into a requirement document (RFP) and a technical and commercial proposal.
 
 Plain HTML, CSS and JavaScript. No build step. Hosted on GitHub Pages.

@@ -44,6 +44,29 @@
     { id: 'feedback', name: 'Feedback and reviews', days: 2, re: /\b(feedback|review|rating|survey|complain)/, desc: 'Collect ratings after each visit or order, flag unhappy customers to the owner.' },
   ];
 
+  const RESULTS = {
+    admin: ['Owner sees the day’s numbers without calling anyone', 'Owner dashboard opened daily'],
+    mobile: ['Customers and staff use one app instead of calls and paper', 'Share of work done in the app'],
+    portal: ['Customers help themselves online, day or night', 'Requests received outside office hours'],
+    booking: ['No double bookings and fewer no-shows', 'No-show rate, double bookings per month'],
+    orders: ['Orders taken around the clock without a phone call', 'Orders placed online per day'],
+    inventory: ['Fewer stock-outs and less dead stock', 'Stock-out days per month'],
+    billing: ['Payments collected faster, with every rupee on record', 'Days to collect, pending dues'],
+    crm: ['No lead forgotten; every enquiry followed up', 'Enquiry-to-sale conversion'],
+    notify: ['Reminders and updates go out by themselves, no calls needed', 'Staff hours spent on reminder calls'],
+    staff: ['Attendance and salaries without registers or disputes', 'Hours spent on payroll each month'],
+    delivery: ['Customers know where their order is without calling', '“Where is my order” calls per day'],
+    docs: ['Any record found in seconds, from any phone', 'Time to find a document'],
+    reports: ['Decisions made on today’s numbers, not last month’s', 'Reports produced without manual work'],
+    branches: ['Every branch run the same way, compared side by side', 'Branch performance gap'],
+    integr: ['No double entry between systems', 'Hours of data entry saved'],
+    ai_docs: ['Bills and forms typed in by AI, checked by a person', 'Minutes per document'],
+    ai_chat: ['Common questions answered instantly, 24 hours a day', 'Questions answered without staff'],
+    ai_insight: ['Weekly advice written from your own numbers', 'Actions taken from insights'],
+    offline: ['Work never stops when the internet does', 'Hours lost to network issues'],
+    feedback: ['Unhappy customers caught before they leave', 'Repeat-customer rate'],
+  };
+
   const INDUSTRIES = [
     ['Restaurant and food', /\b(restaurant|cafe|kitchen|food|hotel|bakery|cloud kitchen|catering)/],
     ['Healthcare clinic', /\b(clinic|doctor|patient|hospital|dental|pharmacy|diagnostic|lab)/],
@@ -131,11 +154,12 @@
       '<h3>1. Background</h3><p>' + esc(rfp.problem) + '</p>' +
       '<h3>2. Problems to solve</h3>' + (rfp.pains.length ? '<ul>' + rfp.pains.map((p) => '<li>' + esc(p) + '</li>').join('') + '</ul>' : '<p>Day-to-day work is handled manually and the owner lacks a single view of operations.</p>') +
       '<h3>3. Objectives</h3><ul>' + (rfp.wants.length ? rfp.wants.map((w) => '<li>' + esc(w) + '</li>').join('') : '') + '<li>Replace manual records with one system the whole team uses.</li><li>Give the owner live numbers without asking anyone.</li></ul>' +
-      '<h3>4. Business profile</h3><div class="tbl"><table><tbody><tr><th>Industry</th><td>' + esc(rfp.industry) + '</td></tr><tr><th>Users of the system</th><td>' + rfp.roles.map(esc).join(', ') + '</td></tr><tr><th>Scale</th><td>' + (sc.users ? '~' + sc.users.toLocaleString('en-IN') + ' customers or records' : 'Not stated, assumed under 300') + ' · ' + sc.branches + ' location' + (sc.branches > 1 ? 's' : '') + '</td></tr></tbody></table></div>' +
-      '<h3>5. Scope: modules required</h3><p>We detected these from your description. Tick or untick any of them, then create the proposal.</p>' +
+      '<h3>4. Results expected</h3><ul>' + rfp.modules.filter((m) => RESULTS[m]).map((m) => '<li>' + esc(RESULTS[m][0]) + '</li>').join('') + '</ul>' +
+      '<h3>5. Business profile</h3><div class="tbl"><table><tbody><tr><th>Industry</th><td>' + esc(rfp.industry) + '</td></tr><tr><th>Users of the system</th><td>' + rfp.roles.map(esc).join(', ') + '</td></tr><tr><th>Scale</th><td>' + (sc.users ? '~' + sc.users.toLocaleString('en-IN') + ' customers or records' : 'Not stated, assumed under 300') + ' · ' + sc.branches + ' location' + (sc.branches > 1 ? 's' : '') + '</td></tr></tbody></table></div>' +
+      '<h3>6. Scope: modules required</h3><p>We detected these from your description. Tick or untick any of them, then create the proposal.</p>' +
       '<div class="chips" id="modchips">' + MODULES.map((m) => '<button type="button" class="chip' + (rfp.modules.includes(m.id) ? ' on' : '') + '" data-mod="' + m.id + '"' + (m.core ? ' disabled title="Always included"' : '') + '>' + esc(m.name) + '</button>').join('') + '</div>' +
-      '<h3>6. Non-functional requirements</h3><ul><li>Works on phone and desktop browsers; mobile app if listed above.</li><li>Data hosted in India, daily backups, role-based access.</li><li>Pages load in under 2 seconds on 4G.</li><li>English first; Tamil or Hindi labels on request.</li></ul>' +
-      '<h3>7. Questions for our call</h3><ul><li>Which tools or spreadsheets do you use today, and should data move across?</li><li>Who will approve designs and test the system on your side?</li><li>Any date you must go live by?</li></ul>';
+      '<h3>7. Non-functional requirements</h3><ul><li>Works on phone and desktop browsers; mobile app if listed above.</li><li>Data hosted in India, daily backups, role-based access.</li><li>Pages load in under 2 seconds on 4G.</li><li>English first; Tamil or Hindi labels on request.</li></ul>' +
+      '<h3>8. Questions for our call</h3><ul><li>Which tools or spreadsheets do you use today, and should data move across?</li><li>Who will approve designs and test the system on your side?</li><li>Any date you must go live by?</li></ul>';
   }
 
   // ---------- Proposal document ----------
@@ -151,23 +175,25 @@
       '<b>Messaging:</b> Meta WhatsApp Cloud API and MSG91 SMS, sent from your own business number.'];
     if (e.ai) stack.push('<b>AI:</b> Anthropic Claude (primary) or OpenAI ChatGPT through their business APIs. No model is trained on your data.');
     const plan = [['Discovery and design', p1, 'Workshops, screen designs in Figma, final scope signed off'], ['Build', p2, 'Weekly demos on a test link; you try features as they land'], ['Testing (UAT)', p3, 'Your team tests with real data; we fix what you find'], ['Go-live', 1, 'Store submission, data migration, staff training']];
-    return '<div class="dhead"><div><span class="tag">Technical and commercial proposal</span><h2>' + esc(rfp.biz) + '</h2></div><div class="meta">Ref ' + rfp.id + '-P<br>' + dt + '<br>Valid until ' + valid + '</div></div>' +
+    return '<div class="dhead"><div><span class="tag">Result plan · technical and commercial proposal</span><h2>' + esc(rfp.biz) + '</h2></div><div class="meta">Ref ' + rfp.id + '-P<br>' + dt + '<br>Valid until ' + valid + '</div></div>' +
       '<p><b>From:</b> ' + esc(C.company) + ' · ' + esc(C.phoneDisplay) + ' · ' + esc(C.email) + (rfp.name ? '<br><b>To:</b> ' + esc(rfp.name) + ', ' + esc(rfp.biz) : '') + '</p>' +
 
-      '<h3>1. Summary</h3><p>We propose a ' + (rfp.modules.includes('mobile') ? 'web and mobile' : 'web') + ' system for ' + esc(rfp.biz) + ' (' + esc(rfp.industry.toLowerCase()) + ') covering ' + mods.length + ' modules. It replaces manual work with one shared system for ' + rfp.roles.map((r) => r.toLowerCase()).join(', ') + '. Delivery takes about <b>' + w + ' weeks</b> for a fixed price of <b>' + inr(e.price) + '</b> plus GST, or <b>' + inr(e.subMonthly) + ' a month</b> with no upfront payment.</p>' +
+      '<h3>1. Summary</h3><p>Inraa works as Result as a Service: we build, run and improve the system, and report the result to you every month. We propose a ' + (rfp.modules.includes('mobile') ? 'web and mobile' : 'web') + ' system for ' + esc(rfp.biz) + ' (' + esc(rfp.industry.toLowerCase()) + ') covering ' + mods.length + ' modules. It replaces manual work with one shared system for ' + rfp.roles.map((r) => r.toLowerCase()).join(', ') + '. Delivery takes about <b>' + w + ' weeks</b> for a fixed price of <b>' + inr(e.price) + '</b> plus GST, or <b>' + inr(e.subMonthly) + ' a month</b> with no upfront payment.</p>' +
 
-      '<h3>2. Technical proposal</h3><h4>2.1 Scope of work</h4><div class="tbl"><table><thead><tr><th>Module</th><th>What you get</th></tr></thead><tbody>' + mods.map((x) => '<tr><td>' + esc(x.m.name) + '</td><td>' + esc(x.m.desc) + '</td></tr>').join('') + '</tbody></table></div>' +
-      '<h4>2.2 Architecture</h4><ul>' + stack.map((s) => '<li>' + s + '</li>').join('') + '</ul>' +
-      '<h4>2.3 How we deliver</h4><p>A squad of one senior engineer and one reviewer/tester, working with AI coding assistants (Claude and ChatGPT) for code, tests and documentation. Every change is reviewed by a person before it reaches your test link. This is why the effort below is lower than a traditional team’s.</p>' +
-      '<h4>2.4 Timeline</h4><div class="tbl"><table><thead><tr><th>Phase</th><th class="r">Weeks</th><th>Outcome</th></tr></thead><tbody>' + plan.map((r) => '<tr><td>' + r[0] + '</td><td class="r">' + r[1] + '</td><td>' + r[2] + '</td></tr>').join('') + '<tr class="tot"><td>Total</td><td class="r">' + w + '</td><td></td></tr></tbody></table></div>' +
-      '<h4>2.5 What we use, and what we don’t</h4><ul>' +
+      '<h3>2. Results we will deliver</h3><p>We agree the starting number for each of these in the first week, then report it every month.</p><div class="tbl"><table><thead><tr><th>Result</th><th>How we measure it</th></tr></thead><tbody>' + mods.filter((x) => RESULTS[x.m.id]).map((x) => '<tr><td>' + esc(RESULTS[x.m.id][0]) + '</td><td>' + esc(RESULTS[x.m.id][1]) + '</td></tr>').join('') + '</tbody></table></div>' +
+      '<div class="note">Cost cut: manual calls, registers and spreadsheets replaced by automation. Revenue protected: bookings, payments and follow-ups keep happening when you are away.</div>' +
+      '<h3>3. Technical proposal</h3><h4>3.1 Scope of work</h4><div class="tbl"><table><thead><tr><th>Module</th><th>What you get</th></tr></thead><tbody>' + mods.map((x) => '<tr><td>' + esc(x.m.name) + '</td><td>' + esc(x.m.desc) + '</td></tr>').join('') + '</tbody></table></div>' +
+      '<h4>3.2 Architecture</h4><ul>' + stack.map((s) => '<li>' + s + '</li>').join('') + '</ul>' +
+      '<h4>3.3 How we deliver</h4><p>A squad of one senior engineer and one reviewer/tester, working with AI coding assistants (Claude and ChatGPT) for code, tests and documentation. Every change is reviewed by a person before it reaches your test link. This is why the effort below is lower than a traditional team’s.</p>' +
+      '<h4>3.4 Timeline</h4><div class="tbl"><table><thead><tr><th>Phase</th><th class="r">Weeks</th><th>Outcome</th></tr></thead><tbody>' + plan.map((r) => '<tr><td>' + r[0] + '</td><td class="r">' + r[1] + '</td><td>' + r[2] + '</td></tr>').join('') + '<tr class="tot"><td>Total</td><td class="r">' + w + '</td><td></td></tr></tbody></table></div>' +
+      '<h4>3.5 What we use, and what we don’t</h4><ul>' +
       '<li>AI features call third-party models (Anthropic Claude, OpenAI ChatGPT) over their APIs. Text or images sent for AI processing are handled by those providers under their business terms, which do not train on API data.</li>' +
       '<li>We do not train custom AI models, run GPUs on your premises or promise 100% AI accuracy. AI results that affect money, health or legal records are shown to a person to confirm.</li>' +
       '<li>We do not supply hardware (biometric devices, printers, GPS units); we integrate with standard devices you buy.</li>' +
       '<li>Uptime target 99.5%, backed by our cloud providers. Support during ' + esc(C.hours) + '; urgent production issues are picked up the same day.</li>' +
       '<li>Play Store and App Store developer accounts are in your name; store fees (about ₹2,100 once for Google and ₹8,300 a year for Apple) are paid by you.</li></ul>' +
 
-      '<h3>3. Commercial proposal</h3><h4>3.1 Effort</h4><div class="tbl"><table><thead><tr><th>Item</th><th class="r">Days</th><th class="r">Amount</th></tr></thead><tbody>' +
+      '<h3>4. Commercial proposal</h3><h4>4.1 Effort</h4><div class="tbl"><table><thead><tr><th>Item</th><th class="r">Days</th><th class="r">Amount</th></tr></thead><tbody>' +
       '<tr><td>Discovery and design</td><td class="r">' + e.discovery + '</td><td class="r">' + inr(e.discovery * RATE.dayRate) + '</td></tr>' +
       mods.map((x) => '<tr><td>' + esc(x.m.name) + '</td><td class="r">' + x.days + '</td><td class="r">' + inr(x.days * RATE.dayRate) + '</td></tr>').join('') +
       '<tr><td>Testing and review</td><td class="r">' + e.qa + '</td><td class="r">' + inr(e.qa * RATE.dayRate) + '</td></tr>' +
@@ -175,13 +201,13 @@
       '<tr><td>Contingency (10%)</td><td class="r">' + e.cont + '</td><td class="r">' + inr(e.cont * RATE.dayRate) + '</td></tr>' +
       '<tr class="tot"><td>Total</td><td class="r">' + e.days + '</td><td class="r">' + inr(e.price) + '</td></tr></tbody></table></div>' +
       '<p style="font-size:13.5px;color:#666">Day rate ' + inr(RATE.dayRate) + ' for an AI-assisted senior engineer. Prices exclude 18% GST.</p>' +
-      '<h4>3.2 Choose how to pay</h4><div class="opt">' +
+      '<h4>4.2 Choose how to pay</h4><div class="opt">' +
       '<div><div class="lbl">Option A · Own it</div><div class="big">' + inr(e.price) + '</div><div>one-time build, plus ' + inr(e.monthly) + '/month to run</div><ul><li>30% on signing</li><li>40% when the build is on the test link</li><li>30% on go-live</li><li>Source code handed over to you</li></ul></div>' +
-      '<div><div class="lbl">Option B · Subscribe</div><div class="big">' + inr(e.subMonthly) + '<span style="font-size:15px">/month</span></div><div>no upfront payment, everything included</div><ul><li>24-month minimum term</li><li>Hosting, support and updates included</li><li>Buy out the code any time after 12 months</li><li>First month paid on signing</li></ul></div></div>' +
-      '<h4>3.3 Monthly running cost (Option A)</h4><div class="tbl"><table><tbody><tr><td>Cloud hosting, backups and monitoring</td><td class="r">' + inr(e.hosting) + '</td></tr><tr><td>Support, bug fixes and small changes</td><td class="r">' + inr(e.support) + '</td></tr>' + (e.ai ? '<tr><td>AI usage (Claude / ChatGPT API), estimate, billed at actuals</td><td class="r">' + inr(e.aiRun) + '</td></tr>' : '') + '<tr class="tot"><td>Per month</td><td class="r">' + inr(e.monthly) + '</td></tr></tbody></table></div>' +
+      '<div><div class="lbl">Option B · Result subscription</div><div class="big">' + inr(e.subMonthly) + '<span style="font-size:15px">/month</span></div><div>no upfront payment, everything included</div><ul><li>24-month minimum term</li><li>Hosting, support, updates and monthly result report included</li><li>Buy out the code any time after 12 months</li><li>First month paid on signing</li></ul></div></div>' +
+      '<h4>4.3 Monthly result service (Option A)</h4><div class="tbl"><table><tbody><tr><td>Cloud hosting, backups and monitoring</td><td class="r">' + inr(e.hosting) + '</td></tr><tr><td>Result service: support, fixes, improvements and monthly result report</td><td class="r">' + inr(e.support) + '</td></tr>' + (e.ai ? '<tr><td>AI usage (Claude / ChatGPT API), estimate, billed at actuals</td><td class="r">' + inr(e.aiRun) + '</td></tr>' : '') + '<tr class="tot"><td>Per month</td><td class="r">' + inr(e.monthly) + '</td></tr></tbody></table></div>' +
       '<div class="note">WhatsApp messages are billed at Meta’s published rates and payment-gateway fees by the gateway; both go to your own accounts. New features after go-live are quoted at the same day rate.</div>' +
-      '<h4>3.4 Year one at a glance</h4><div class="tbl"><table><tbody><tr><td>Option A: build + 12 months running</td><td class="r">' + inr(e.price + e.monthly * 12) + '</td></tr><tr><td>Option B: 12 months subscription</td><td class="r">' + inr(e.subMonthly * 12) + '</td></tr><tr><td>With GST (Option A)</td><td class="r">' + inr((e.price + e.monthly * 12) * (1 + RATE.gst)) + '</td></tr></tbody></table></div>' +
-      '<h3>4. Next steps</h3><ol><li>A 30-minute call to walk through this proposal and the open questions.</li><li>We confirm scope and send the agreement.</li><li>Kick-off within 7 days of signing.</li></ol>' +
+      '<h4>4.4 Year one at a glance</h4><div class="tbl"><table><tbody><tr><td>Option A: build + 12 months running</td><td class="r">' + inr(e.price + e.monthly * 12) + '</td></tr><tr><td>Option B: 12 months subscription</td><td class="r">' + inr(e.subMonthly * 12) + '</td></tr><tr><td>With GST (Option A)</td><td class="r">' + inr((e.price + e.monthly * 12) * (1 + RATE.gst)) + '</td></tr></tbody></table></div>' +
+      '<h3>5. Next steps</h3><ol><li>A 30-minute call to walk through this proposal and the open questions.</li><li>We confirm scope and send the agreement.</li><li>Kick-off within 7 days of signing.</li></ol>' +
       '<p style="margin-top:22px;font-size:13.5px;color:#666">This proposal was drafted by Inraa’s proposal agent from your description and will be confirmed by our team on the call.</p>';
   }
 
@@ -189,8 +215,8 @@
     const C = CFG(), p = C.products[key];
     const dt = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
     const unit = p.yearly ? '/year' : '/month';
-    return '<div class="dhead"><div><span class="tag">Product proposal</span><h2>' + esc(p.name) + ' for ' + esc(input.biz || 'your business') + '</h2></div><div class="meta">' + dt + '<br>Valid for 30 days</div></div>' +
-      '<h3>1. What you get</h3><p>' + esc(p.summary) + '</p><ul>' + p.points.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>' +
+    return '<div class="dhead"><div><span class="tag">Result plan</span><h2>' + esc(p.name) + ' for ' + esc(input.biz || 'your business') + '</h2></div><div class="meta">' + dt + '<br>Valid for 30 days</div></div>' +
+      '<h3>1. The result for you</h3><ul>' + p.results.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul><h3>How it works</h3><p>' + esc(p.summary) + '</p><ul>' + p.points.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>' +
       '<h3>2. Plans</h3><div class="tbl"><table><thead><tr><th>Plan</th><th>Includes</th><th class="r">Price</th></tr></thead><tbody>' + p.plans.map((x) => '<tr><td>' + esc(x[0]) + '</td><td>' + esc(x[2]) + '</td><td class="r">' + (x[1] ? inr(x[1]) + unit : 'Free') + '</td></tr>').join('') + '</tbody></table></div>' +
       (p.setup ? '<p>One-time setup and data import: ' + inr(p.setup) + '. Prices exclude 18% GST. Paying yearly upfront saves up to 20%.</p>' : '<p>No setup fee and zero commission on bookings. Prices exclude 18% GST.</p>') +
       '<h3>3. Need changes?</h3><p>If you need features beyond the standard product, describe them under “Something else” and our agent will cost them separately at our standard day rate of ' + inr(RATE.dayRate) + '.</p>' +

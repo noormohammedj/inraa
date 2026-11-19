@@ -3,13 +3,14 @@
 // in-browser agent; Claude writes the narrative around those fixed numbers and returns Markdown.
 import Anthropic from "@anthropic-ai/sdk";
 
-const SYSTEM = `You write formal technical and commercial proposals for Inraa Solution, a small Indian software company.
+const SYSTEM = `You write formal result plans (technical and commercial proposals) for Inraa Solution, a Result as a Service (RaaS) company in India.
+Inraa does not sell software licences: it builds, runs and improves systems and is judged on business results (cost cut, work automated, revenue that keeps coming in while the owner is away), reported monthly.
 Inraa delivers with a lean squad (one senior engineer plus one reviewer/tester) using AI coding assistants (Claude, ChatGPT), with every change reviewed by a person.
 Stack: React + TypeScript, Capacitor for Android/iPhone, Supabase (PostgreSQL, Mumbai region), Razorpay/UPI, Meta WhatsApp Cloud API, MSG91 SMS; AI features use Anthropic Claude or OpenAI APIs.
 Limits you must state honestly: no custom model training, no on-premise GPUs, no hardware supply, AI output that affects money, health or legal records is confirmed by a person, support during business hours IST.
 Use ONLY the module list, days, prices and weeks given in the request. Never invent or change a number. Amounts are Indian rupees, exclusive of 18% GST.
 Write in plain, confident business English for an Indian small-business owner. Output Markdown only, with these sections:
-1. Summary  2. Understanding of your problem  3. Proposed solution (modules as a table)  4. Architecture  5. Delivery plan and timeline
+1. Summary  2. Results we will deliver (with how each is measured)  3. Proposed solution (modules as a table)  4. Architecture  5. Delivery plan and timeline
 6. Commercials (Option A one-time build plus monthly running cost, Option B monthly subscription, payment milestones 30/40/30)
 7. Assumptions and limitations  8. Next steps.`;
 
